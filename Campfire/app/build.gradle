@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace 'com.blinkchat'
+    namespace 'com.campfire'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.blinkchat"
+        applicationId "com.campfire"
         minSdk 24
         targetSdk 34
         versionCode 1

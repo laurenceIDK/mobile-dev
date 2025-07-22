@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">BlinkChat</string>
+    <string name="app_name">Campfire</string>
     
     <!-- Authentication -->
     <string name="sign_in">Sign In</string>
@@ -83,7 +83,7 @@
     <string name="validation_message_required">Message cannot be empty</string>
     
     <!-- Welcome Messages -->
-    <string name="welcome_title">Welcome to BlinkChat</string>
+    <string name="welcome_title">Welcome to Campfire</string>
     <string name="welcome_subtitle">Self-destructing group chats</string>
     <string name="no_groups_title">No Groups Yet</string>
     <string name="no_groups_subtitle">Create a new group or join an existing one to start chatting</string>

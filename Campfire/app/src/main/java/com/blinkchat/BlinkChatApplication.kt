@@ -1,13 +1,13 @@
-package com.blinkchat
+package com.campfire
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 
 /**
- * BlinkChat Application class
+ * Campfire Application class
  */
 @HiltAndroidApp
-class BlinkChatApplication : Application() {
+class CampfireApplication : Application() {
     
     override fun onCreate() {
         super.onCreate()
