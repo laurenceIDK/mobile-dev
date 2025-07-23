@@ -23,6 +23,17 @@ class AuthUseCase @Inject constructor(
     }
     
     /**
+     * Signs in user with Google
+     */
+    suspend fun signInWithGoogle(idToken: String): Result<User> {
+        return if (idToken.isBlank()) {
+            Result.failure(Exception("Google ID token is required"))
+        } else {
+            authRepository.signInWithGoogle(idToken)
+        }
+    }
+    
+    /**
      * Signs up new user with validation
      */
     suspend fun signUp(email: String, password: String, name: String): Result<User> {

@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -18,6 +19,16 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import com.campfire.presentation.viewmodel.LoginViewModel
+import com.campfire.utils.GoogleSignInHelper
+import com.campfire.utils.UiState
+import kotlinx.coroutines.launch
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.border
+import javax.inject.Inject
 import androidx.compose.material.icons.filled.VisibilityOff
 import com.campfire.presentation.viewmodel.LoginViewModel
 import com.campfire.utils.UiState
@@ -31,6 +42,10 @@ fun LoginScreen(
     onNavigateToHome: () -> Unit,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val googleSignInHelper = remember { GoogleSignInHelper() }
+    
     val uiState by viewModel.uiState.collectAsState()
     val currentUser by viewModel.currentUser.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -200,18 +215,93 @@ fun LoginScreen(
                     )
                 }
                 
+                // Divider for Google Sign-In
+                if (!isSignUp) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Divider(modifier = Modifier.weight(1f))
+                        Text(
+                            text = "OR",
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        )
+                        Divider(modifier = Modifier.weight(1f))
+                    }
+                    
+                    // Google Sign-In Button
+                    GoogleSignInButton(
+                        onClick = { 
+                            scope.launch {
+                                googleSignInHelper.signIn(
+                                    context = context,
+                                    webClientId = com.campfire.utils.FirebaseConfig.WEB_CLIENT_ID,
+                                    onSuccess = { idToken ->
+                                        viewModel.signInWithGoogle(idToken)
+                                    },
+                                    onError = { error ->
+                                        // Handle error - you can show a snackbar or error message
+                                        // For now, just log it (you can improve this later)
+                                    }
+                                )
+                            }
+                        },
+                        isEnabled = !isLoading,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                
                 // Forgot password
                 if (!isSignUp) {
                     TextButton(
                         onClick = { showForgotPassword = true }
                     ) {
                         Text("Forgot Password?")
-                    }
-                }
             }
         }
-        
-        // Error display
+    }
+}
+
+@Composable
+fun GoogleSignInButton(
+    onClick: () -> Unit,
+    isEnabled: Boolean,
+    modifier: Modifier = Modifier
+) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier.height(50.dp),
+        enabled = isEnabled,
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = Color.White,
+            contentColor = Color.Black
+        ),
+        border = ButtonDefaults.outlinedButtonBorder.copy(
+            width = 1.dp,
+            brush = null
+        )
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            // Google Icon (you can replace with actual Google icon)
+            Text(
+                text = "🔍",
+                fontSize = 18.sp,
+                modifier = Modifier.padding(end = 8.dp)
+            )
+            Text(
+                text = "Continue with Google",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium
+            )
+        }
+    }
+}        // Error display
         when (uiState) {
             is UiState.Error -> {
                 Card(

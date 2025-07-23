@@ -87,6 +87,32 @@ class LoginViewModel @Inject constructor(
     }
     
     /**
+     * Signs in user with Google
+     */
+    fun signInWithGoogle(idToken: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _uiState.value = UiState.Loading
+            
+            try {
+                val result = authUseCase.signInWithGoogle(idToken)
+                if (result.isSuccess) {
+                    val user = result.getOrNull()!!
+                    _uiState.value = UiState.Success(user)
+                    _currentUser.value = user
+                } else {
+                    val error = result.exceptionOrNull()?.message ?: "Google sign in failed"
+                    _uiState.value = UiState.Error(error)
+                }
+            } catch (e: Exception) {
+                _uiState.value = UiState.Error(e.message ?: "An unexpected error occurred")
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+    
+    /**
      * Signs out current user
      */
     fun signOut() {

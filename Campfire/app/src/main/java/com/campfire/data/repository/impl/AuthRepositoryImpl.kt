@@ -1,9 +1,14 @@
 package com.campfire.data.repository.impl
 
+import android.content.Context
+import androidx.credentials.ClearCredentialStateRequest
+import androidx.credentials.CredentialManager
+import androidx.credentials.exceptions.ClearCredentialException
 import com.campfire.data.model.User
 import com.campfire.data.repository.AuthRepository
 import com.campfire.data.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.channels.awaitClose
@@ -12,6 +17,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 /**
  * Firebase implementation of AuthRepository
@@ -19,7 +25,8 @@ import javax.inject.Singleton
 @Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    @ApplicationContext private val context: Context
 ) : AuthRepository {
     
     override suspend fun signIn(email: String, password: String): Result<User> {
@@ -49,6 +56,45 @@ class AuthRepositoryImpl @Inject constructor(
                 }
             } else {
                 Result.failure(Exception("Authentication failed"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    override suspend fun signInWithGoogle(idToken: String): Result<User> {
+        return try {
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
+            val authResult = firebaseAuth.signInWithCredential(credential).await()
+            val firebaseUser = authResult.user
+            
+            if (firebaseUser != null) {
+                // Check if user profile exists in Firestore
+                val userResult = userRepository.getUser(firebaseUser.uid)
+                if (userResult.isSuccess && userResult.getOrNull() != null) {
+                    // Update online status for existing user
+                    userRepository.updateOnlineStatus(firebaseUser.uid, true)
+                    Result.success(userResult.getOrNull()!!)
+                } else {
+                    // Create user profile for new Google sign-in user
+                    val user = User(
+                        uid = firebaseUser.uid,
+                        name = firebaseUser.displayName ?: "",
+                        email = firebaseUser.email ?: "",
+                        profileUrl = firebaseUser.photoUrl?.toString(),
+                        isOnline = true,
+                        lastSeen = Timestamp.now()
+                    )
+                    
+                    val saveResult = userRepository.saveUser(user)
+                    if (saveResult.isSuccess) {
+                        Result.success(user)
+                    } else {
+                        Result.failure(saveResult.exceptionOrNull() ?: Exception("Failed to save user profile"))
+                    }
+                }
+            } else {
+                Result.failure(Exception("Google authentication failed"))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -97,7 +143,21 @@ class AuthRepositoryImpl @Inject constructor(
                 // Update online status before signing out
                 userRepository.updateOnlineStatus(currentUser.uid, false)
             }
+            
+            // Firebase sign out
             firebaseAuth.signOut()
+            
+            // Clear credential state from all credential providers
+            try {
+                val credentialManager = CredentialManager.create(context)
+                val clearRequest = ClearCredentialStateRequest()
+                credentialManager.clearCredentialState(clearRequest)
+            } catch (e: ClearCredentialException) {
+                // Log the error but don't fail the sign out process
+                // The user is still signed out from Firebase
+                android.util.Log.e("AuthRepository", "Couldn't clear user credentials: ${e.localizedMessage}")
+            }
+            
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)

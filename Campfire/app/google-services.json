@@ -12,7 +12,20 @@
           "package_name": "com.campfire"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "636331457538-o3pfq36eqv88vjtokbi0vp5tr9djcmv7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.campfire",
+            "certificate_hash": "e8361bc3af67652f63c0a34093e24eeffdf18e8d"
+          }
+        },
+        {
+          "client_id": "636331457538-jedr9vsjjsmhis0up02m264ok4kvekma.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyC-SMgXH5m9BBgauOuyU9MMtUFdwi5zy-0"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "636331457538-jedr9vsjjsmhis0up02m264ok4kvekma.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
