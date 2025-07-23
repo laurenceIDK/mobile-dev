@@ -1,4 +1,8 @@
-# BlinkChat - Self-Destructing Group Chat App
+# Campfire - Self-Destructing Group Chat App
+
+## Overview
+
+Campfire is a modern Android application built with Kotlin and Jetpack Compose that provides self-destructing group chat functionality. Groups automatically expire based on configurable contracts, ensuring temporary and ephemeral communication.nkChat - Self-Destructing Group Chat App
 
 ## 📱 Overview
 
@@ -53,7 +57,7 @@ Multiple expiry contract types:
 ## 📁 Project Structure
 
 ```
-app/src/main/java/com/blinkchat/
+app/src/main/java/com/campfire/
 ├── data/
 │   ├── model/             # Data models (User, Group, Message, ExpiryContract)
 │   └── repository/        # Repository interfaces and Firebase implementations
@@ -65,7 +69,7 @@ app/src/main/java/com/blinkchat/
 ├── utils/                 # Utility classes and extensions
 ├── di/                    # Dependency injection modules
 ├── ui/theme/              # Compose theme configuration
-├── BlinkChatApplication.kt
+├── CampfireApplication.kt
 └── MainActivity.kt
 ```
 
@@ -81,7 +85,7 @@ app/src/main/java/com/blinkchat/
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd BlinkChat
+   cd Campfire
    ```
 
 2. **Firebase Configuration**

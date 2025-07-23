@@ -1,10 +1,10 @@
-# Firebase Configuration for BlinkChat
+# Firebase Configuration for Campfire
 
 ## Setting up Firebase
 
 1. Go to [Firebase Console](https://console.firebase.google.com)
-2. Create a new project named "BlinkChat"
-3. Add an Android app with package name `com.blinkchat`
+2. Create a new project named "Campfire"
+3. Add an Android app with package name `com.campfire`
 
 ## Enable Required Services
 
@@ -196,7 +196,7 @@ exports.cleanupInactiveGroupMessages = functions.pubsub
 
 1. Download `google-services.json` from your Firebase project
 2. Place it in the `app/` directory of your Android project
-3. Ensure the package name matches exactly: `com.blinkchat`
+3. Ensure the package name matches exactly: `com.campfire`
 
 ## Testing Data
 
