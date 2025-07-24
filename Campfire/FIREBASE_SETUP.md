@@ -62,25 +62,38 @@ service cloud.firestore {
 ```
 
 ### Storage Rules
+
+**Option 1: Basic (Currently Working)**
 ```javascript
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    // Profile pictures
-    match /profile_pictures/{userId}.jpg {
-      allow read: if true; // Public read for profile pictures
-      allow write: if request.auth != null && request.auth.uid == userId;
-    }
-    
-    // Message images (if implemented)
-    match /message_images/{imageId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null;
+    match /{allPaths=**} {
+      allow read, write: if request.auth != null;
     }
   }
 }
 ```
 
+**Option 2: Secure (Upgrade to this once basic works)**
+```javascript
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Profile pictures - public read, owner write
+    match /profile_pictures/{userId}/{fileName} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Message images - authenticated users only
+    match /message_images/{imageId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
+```
+ // DARYL STOPPED HERE LAST NIGHT
 ## Firestore Indexes
 
 Create these compound indexes for optimal performance:
