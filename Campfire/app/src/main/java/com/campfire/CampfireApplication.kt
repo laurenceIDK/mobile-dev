@@ -1,12 +1,12 @@
 package com.campfire
 
 import android.app.Application
-import dagger.hilt.android.HiltAndroidApp
+// import dagger.hilt.android.HiltAndroidApp
 
 /**
  * Campfire Application class
  */
-@HiltAndroidApp
+// @HiltAndroidApp
 class CampfireApplication : Application() {
     
     override fun onCreate() {

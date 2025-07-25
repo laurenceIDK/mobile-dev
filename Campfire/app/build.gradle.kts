@@ -2,8 +2,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
-    id("com.google.dagger.hilt.android")
-    id("kotlin-kapt")
+    // id("com.google.dagger.hilt.android")
+    // id("com.google.devtools.ksp") version "1.9.10-1.0.13"
 }
 
 android {
@@ -82,10 +82,10 @@ dependencies {
     implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
     
-    // Hilt
-    implementation("com.google.dagger:hilt-android:2.48")
-    kapt("com.google.dagger:hilt-compiler:2.48")
-    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+    // Hilt (temporarily disabled for basic build)
+    // implementation("com.google.dagger:hilt-android:2.48")
+    // ksp("com.google.dagger:hilt-compiler:2.48")
+    // implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
     
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
